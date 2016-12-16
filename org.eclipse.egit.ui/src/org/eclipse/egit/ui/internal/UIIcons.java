@@ -191,6 +191,9 @@ public class UIIcons {
 	/** Branches tree node */
 	public final static ImageDescriptor BRANCHES;
 
+	/** Branches tree node */
+	public final static ImageDescriptor COMMIT_CONTENT;
+
 	/** Checked-out decorator for branch */
 	public final static ImageDescriptor OVR_CHECKEDOUT;
 
@@ -407,6 +410,7 @@ public class UIIcons {
 		REMOTE_REPOSITORY = map("obj16/remote_entry_tbl.png"); //$NON-NLS-1$
 		REMOTE_SPEC = map("obj16/synchronize.png"); //$NON-NLS-1$
 		BRANCHES = map("obj16/branches_obj.png"); //$NON-NLS-1$
+		COMMIT_CONTENT = map("obj16/note.png"); //$NON-NLS-1$
 		TAGS = map("obj16/tags.png"); //$NON-NLS-1$
 		TAG = map("obj16/version_rep.png"); //$NON-NLS-1$
 		CREATE_TAG = map("obj16/new_tag_obj.png"); //$NON-NLS-1$

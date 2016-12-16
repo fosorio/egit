@@ -104,6 +104,8 @@ public class FindToolbar extends Composite {
 
 	private static final int PREFS_FINDIN_REFERENCE = 5;
 
+	private static final int PREFS_FINDIN_COMMIT_CONTENT = 6;
+
 	private Color errorBackgroundColor;
 
 	/**
@@ -151,6 +153,8 @@ public class FindToolbar extends Composite {
 
 	private MenuItem referenceItem;
 
+	private MenuItem commitContentItem;
+
 	private Image allIcon;
 
 	private Image commitIdIcon;
@@ -162,6 +166,8 @@ public class FindToolbar extends Composite {
 	private Image committerIcon;
 
 	private Image branchesIcon;
+
+	private Image commitContentIcon;
 
 	private FindToolbarJob job;
 
@@ -195,15 +201,18 @@ public class FindToolbar extends Composite {
 		errorBackgroundColor = new Color(getDisplay(), new RGB(255, 150, 150));
 		ResourceManager resourceManager = Activator.getDefault()
 				.getResourceManager();
+
 		allIcon = UIIcons.getImage(resourceManager, UIIcons.SEARCH_COMMIT);
-		commitIdIcon = UIIcons.getImage(resourceManager,
-				UIIcons.ELCL16_ID);
+		commitIdIcon = UIIcons.getImage(resourceManager, UIIcons.ELCL16_ID);
 		commentsIcon = UIIcons.getImage(resourceManager,
 				UIIcons.ELCL16_COMMENTS);
 		authorIcon = UIIcons.getImage(resourceManager, UIIcons.ELCL16_AUTHOR);
 		committerIcon = UIIcons.getImage(resourceManager,
 				UIIcons.ELCL16_COMMITTER);
 		branchesIcon = UIIcons.getImage(resourceManager, UIIcons.BRANCHES);
+		commitContentIcon = UIIcons.getImage(resourceManager,
+				UIIcons.COMMIT_CONTENT);
+
 		GridLayout findLayout = new GridLayout();
 		findLayout.marginHeight = 0;
 		findLayout.marginBottom = 1;
@@ -269,6 +278,9 @@ public class FindToolbar extends Composite {
 		referenceItem = createFindInMenuItem();
 		referenceItem.setText(UIText.HistoryPage_findbar_reference);
 		referenceItem.setImage(branchesIcon);
+		commitContentItem = createFindInMenuItem();
+		commitContentItem.setText(UIText.HistoryPage_findbar_commitContents);
+		commitContentItem.setImage(commitContentIcon);
 
 		prefsDropDown.addListener(SWT.Selection, new Listener() {
 			@Override
@@ -293,6 +305,8 @@ public class FindToolbar extends Composite {
 					else if (committerItem.getSelection())
 						selectFindInItem(referenceItem);
 					else if (referenceItem.getSelection())
+						selectFindInItem(commitContentItem);
+					else if (commitContentItem.getSelection())
 						selectFindInItem(allItem);
 				}
 			}
@@ -370,6 +384,8 @@ public class FindToolbar extends Composite {
 			selectFindInItem(committerItem);
 		else if (selectedPrefsItem == PREFS_FINDIN_REFERENCE)
 			selectFindInItem(referenceItem);
+		else if (selectedPrefsItem == PREFS_FINDIN_COMMIT_CONTENT)
+			selectFindInItem(commitContentItem);
 
 		registerDisposal();
 	}
@@ -573,6 +589,10 @@ public class FindToolbar extends Composite {
 					UIText.HistoryPage_findbar_changeto_reference);
 		else if (menuItem == referenceItem)
 			selectFindInItem(menuItem, PREFS_FINDIN_REFERENCE, branchesIcon,
+					UIText.HistoryPage_findbar_changeto_commitcontents);
+		else if (menuItem == commitContentItem)
+			selectFindInItem(menuItem, PREFS_FINDIN_COMMIT_CONTENT,
+					commitContentIcon,
 					UIText.HistoryPage_findbar_changeto_all);
 	}
 
@@ -598,6 +618,7 @@ public class FindToolbar extends Composite {
 		authorItem.setSelection(false);
 		committerItem.setSelection(false);
 		referenceItem.setSelection(false);
+		commitContentItem.setSelection(false);
 		item.setSelection(true);
 		clear();
 	}
@@ -626,6 +647,7 @@ public class FindToolbar extends Composite {
 			job.findInAuthor = authorItem.getSelection();
 			job.findInCommitter = committerItem.getSelection();
 			job.findInReference = referenceItem.getSelection();
+			job.findInCommitContent = commitContentItem.getSelection();
 		}
 		job.addJobChangeListener(new JobChangeAdapter() {
 

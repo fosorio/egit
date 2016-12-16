@@ -64,7 +64,10 @@ public class FindToolbarJob extends Job {
 
 	boolean findInReference;
 
+	boolean findInCommitContent;
+
 	private final FindResults findResults;
+
 
 	/**
 	 * Creates a new history search job.
@@ -178,9 +181,21 @@ public class FindToolbarJob extends Job {
 					}
 				}
 			}
+
+			if (findInCommitContent
+					&& find(findPattern, revision.getFullMessage())) {
+				if (progress.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				findResults.add(i, revision);
+				continue;
+			}
+
 			progress.worked(1);
 		}
 		return progress.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 	}
+
+
 
 }
