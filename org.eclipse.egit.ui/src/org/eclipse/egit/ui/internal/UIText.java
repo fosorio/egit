@@ -2059,6 +2059,9 @@ public class UIText extends NLS {
 	public static String HistoryPage_findbar_changeto_commit;
 
 	/** */
+	public static String HistoryPage_findbar_changeto_commitcontents;
+
+	/** */
 	public static String HistoryPage_findbar_changeto_comments;
 
 	/** */
@@ -2078,6 +2081,9 @@ public class UIText extends NLS {
 
 	/** */
 	public static String HistoryPage_findbar_reference;
+
+	/** */
+	public static String HistoryPage_findbar_commitContents;
 
 	/** */
 	public static String HistoryPreferencePage_MaxBranchLength;
