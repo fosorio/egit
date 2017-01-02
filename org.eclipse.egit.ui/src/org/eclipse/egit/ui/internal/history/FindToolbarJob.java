@@ -27,6 +27,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.errors.IncorrectObjectTypeException;
 import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.AbbreviatedObjectId;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Ref;
@@ -210,13 +211,15 @@ public class FindToolbarJob extends Job {
 	private boolean findInCommitContent(String findPattern,
 			SWTCommit revision) {
 
+		if (revision.getParentCount() == 0)
+			return false; // FIX THIS
 		Repository repository = (Repository) revision.getAdapter(Repository.class);
 
    		try (ObjectReader reader = repository.newObjectReader()) {
        		CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
-			oldTreeIter.reset(reader, revision.getParent(0).getId());
+			oldTreeIter.reset(reader, revision.getParent(0).getTree().getId());
        		CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-			newTreeIter.reset(reader, revision.getId());
+			newTreeIter.reset(reader, revision.getTree().getId());
 
        		// finally get the list of changed files
        		try (Git git = new Git(repository)) {
@@ -258,7 +261,8 @@ public class FindToolbarJob extends Job {
 
 	private static int countOcurrences(String pattern, AbbreviatedObjectId id,
 			Repository repository) throws MissingObjectException, IOException {
-
+		if (id.toObjectId().equals(ObjectId.zeroId()))
+			return 0;
 		ObjectLoader loader = repository.open(id.toObjectId());
 
 		// and then one can the loader to read the file
