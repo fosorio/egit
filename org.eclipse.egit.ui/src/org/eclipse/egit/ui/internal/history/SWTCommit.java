@@ -65,4 +65,8 @@ class SWTCommit extends PlotCommit<SWTCommitList.SWTLane>
 	public RevCommit getRevCommit() {
 		return this;
 	}
+	
+		public SWTWalk getWalk() {
+		return walk;
+	}
 }
