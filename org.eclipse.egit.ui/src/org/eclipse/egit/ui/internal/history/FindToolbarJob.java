@@ -12,7 +12,6 @@
 package org.eclipse.egit.ui.internal.history;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -21,18 +20,11 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.egit.ui.Activator;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.errors.IncorrectObjectTypeException;
-import org.eclipse.jgit.errors.MissingObjectException;
-import org.eclipse.jgit.lib.AbbreviatedObjectId;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.treewalk.CanonicalTreeParser;
+import org.eclipse.jgit.revwalk.filter.PickaxeRevFilter;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 
 /**
  * This class executes the search function for the find toolbar. To avoid
@@ -211,79 +203,15 @@ public class FindToolbarJob extends Job {
 	private boolean findInCommitContent(String findPattern,
 			SWTCommit revision) {
 
-		if (revision.getParentCount() == 0)
-			return false; // FIX THIS
-		Repository repository = (Repository) revision.getAdapter(Repository.class);
+		RevFilter revFilter = PickaxeRevFilter.create(findPattern, false,
+				(Repository) revision.getAdapter(Repository.class));
 
-   		try (ObjectReader reader = repository.newObjectReader()) {
-       		CanonicalTreeParser oldTreeIter = new CanonicalTreeParser();
-			oldTreeIter.reset(reader, revision.getParent(0).getTree().getId());
-       		CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-			newTreeIter.reset(reader, revision.getTree().getId());
-
-       		// finally get the list of changed files
-       		try (Git git = new Git(repository)) {
-                   List<DiffEntry> diffs= git.diff()
-           		                    .setNewTree(newTreeIter)
-           		                    .setOldTree(oldTreeIter)
-           		                    .call();
-                   for (DiffEntry entry : diffs) {
-
-					if (matchesPickaxe(findPattern, entry, repository))
-						return true;
-
-                   }
-			} catch (GitAPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (IncorrectObjectTypeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		try {
+			return revFilter.include(revision.getWalk(), revision);
+		} catch (StopWalkException | IOException e) {
+			Activator.logError("Error finding pattern in content", e); //$NON-NLS-1$
+			return false;
 		}
-
-		return false;
 	}
-
-	private static boolean matchesPickaxe(String pattern, DiffEntry entry,
-			Repository repository) throws MissingObjectException, IOException {
-
-		int ocurrencesInParent = countOcurrences(pattern, entry.getOldId(),
-						repository);
-		int ocurrencesInCurrent = countOcurrences(pattern, entry.getNewId(),
-						repository);
-
-		return ocurrencesInParent != ocurrencesInCurrent;
-	}
-
-	private static int countOcurrences(String pattern, AbbreviatedObjectId id,
-			Repository repository) throws MissingObjectException, IOException {
-		if (id.toObjectId().equals(ObjectId.zeroId()))
-			return 0;
-		ObjectLoader loader = repository.open(id.toObjectId());
-
-		// and then one can the loader to read the file
-		String str = new String(loader.getCachedBytes());
-
-		int lastIndex = 0;
-		int count = 0;
-
-		while (lastIndex != -1) {
-
-			lastIndex = str.indexOf(pattern, lastIndex);
-
-			if (lastIndex != -1) {
-				count++;
-				lastIndex += pattern.length();
-			}
-		}
-
-		return count;
-
-}
-
 
 }
