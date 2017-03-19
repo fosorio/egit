@@ -206,6 +206,7 @@ public class FindToolbarJob extends Job {
 			SWTCommit revision) {
 
 		RevFilter revFilter = PickaxeRevFilter.create(findPattern, false,
+				ignoreCase,
 				(Repository) revision.getAdapter(Repository.class));
 
 		try {
