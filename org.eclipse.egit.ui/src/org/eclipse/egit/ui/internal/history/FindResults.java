@@ -41,6 +41,8 @@ public class FindResults {
 
 	private final CopyOnWriteArrayList<IFindListener> listeners = new CopyOnWriteArrayList<>();
 
+	private String pattern;
+
 	/**
 	 * Adds the given listener to be notified when search results are added or
 	 * the results are cleared. Has no effect if the listener is already
@@ -243,4 +245,19 @@ public class FindResults {
 	synchronized boolean isOverflow() {
 		return overflow;
 	}
+
+	/**
+	 * @return the pattern
+	 */
+	public String getPattern() {
+		return pattern;
+	}
+
+	/**
+	 * @param pattern
+	 */
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
+	}
+
 }

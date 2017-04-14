@@ -98,7 +98,9 @@ public class FindToolbarJob extends Job {
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		String oldPattern = findResults.getPattern();
 		findResults.clear();
+		findResults.setPattern(pattern);
 
 		if (pattern == null || pattern.isEmpty() || fileRevisions == null
 				|| fileRevisions.length == 0) {
@@ -109,6 +111,9 @@ public class FindToolbarJob extends Job {
 			findPattern = pattern.toLowerCase();
 		}
 
+		if (pattern.startsWith(oldPattern)) {
+
+		}
 		int totalRevisions = fileRevisions.length;
 		SubMonitor progress = SubMonitor.convert(monitor, totalRevisions);
 		for (int i = 0; i < totalRevisions; i++) {
