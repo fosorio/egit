@@ -58,6 +58,8 @@ public class UIPreferences {
 	/** */
 	public final static String FINDTOOLBAR_IGNORE_CASE = "findtoolbar_ignore_case"; //$NON-NLS-1$
 	/** */
+	public final static String FINDTOOLBAR_IGNORE_MERGES = "findtoolbar_ignore_merges"; //$NON-NLS-1$
+	/** */
 	public final static String FINDTOOLBAR_COMMIT_ID = "findtoolbar_commit_id"; //$NON-NLS-1$
 	/** */
 	public final static String FINDTOOLBAR_COMMENTS = "findtoolbar_comments"; //$NON-NLS-1$

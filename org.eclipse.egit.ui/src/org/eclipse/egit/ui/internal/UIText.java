@@ -2038,6 +2038,9 @@ public class UIText extends NLS {
 	public static String HistoryPage_findbar_ignorecase;
 
 	/** */
+	public static String HistoryPage_findbar_ignoremerges;
+
+	/** */
 	public static String HistoryPage_findbar_all;
 
 	/** */

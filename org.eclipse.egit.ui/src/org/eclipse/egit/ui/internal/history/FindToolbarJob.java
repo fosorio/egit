@@ -59,6 +59,8 @@ public class FindToolbarJob extends Job {
 
 	boolean ignoreCase;
 
+	boolean ignoreMerges;
+
 	boolean findInCommitId;
 
 	boolean findInComments;
@@ -124,6 +126,9 @@ public class FindToolbarJob extends Job {
 
 			// Finds for the pattern in the revision history.
 			SWTCommit revision = fileRevisions[i];
+
+			if (ignoreMerges && revision.getParentCount() > 1)
+				continue;
 			try {
 				revision.parseBody();
 			} catch (IOException e) {

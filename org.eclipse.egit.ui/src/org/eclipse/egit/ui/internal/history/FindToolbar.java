@@ -143,6 +143,8 @@ public class FindToolbar extends Composite {
 
 	private MenuItem caseItem;
 
+	private MenuItem mergeItem;
+
 	private MenuItem allItem;
 
 	private MenuItem commitIdItem;
@@ -265,6 +267,8 @@ public class FindToolbar extends Composite {
 		prefsMenu = new Menu(getShell(), SWT.POP_UP);
 		caseItem = new MenuItem(prefsMenu, SWT.CHECK);
 		caseItem.setText(UIText.HistoryPage_findbar_ignorecase);
+		mergeItem = new MenuItem(prefsMenu, SWT.CHECK);
+		mergeItem.setText(UIText.HistoryPage_findbar_ignoremerges);
 		new MenuItem(prefsMenu, SWT.SEPARATOR);
 		allItem = createFindInMenuItem();
 		allItem.setText(UIText.HistoryPage_findbar_all);
@@ -284,6 +288,7 @@ public class FindToolbar extends Composite {
 		referenceItem = createFindInMenuItem();
 		referenceItem.setText(UIText.HistoryPage_findbar_reference);
 		referenceItem.setImage(branchesIcon);
+		new MenuItem(prefsMenu, SWT.SEPARATOR);
 		commitContentItem = createFindInMenuItem();
 		commitContentItem.setText(UIText.HistoryPage_findbar_commitContents);
 		commitContentItem.setImage(commitContentIcon);
@@ -380,6 +385,24 @@ public class FindToolbar extends Composite {
 		});
 		caseItem.setSelection(store
 				.getBoolean(UIPreferences.FINDTOOLBAR_IGNORE_CASE));
+
+		mergeItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				store.setValue(UIPreferences.FINDTOOLBAR_IGNORE_MERGES,
+						mergeItem.getSelection());
+				if (store.needsSaving()) {
+					try {
+						store.save();
+					} catch (IOException e1) {
+						Activator.handleError(e1.getMessage(), e1, false);
+					}
+				}
+				clear();
+			}
+		});
+		mergeItem.setSelection(
+				store.getBoolean(UIPreferences.FINDTOOLBAR_IGNORE_MERGES));
 
 		int selectedPrefsItem = store.getInt(UIPreferences.FINDTOOLBAR_FIND_IN);
 		if (selectedPrefsItem == PREFS_FINDIN_ALL)
@@ -665,6 +688,7 @@ public class FindToolbar extends Composite {
 		job.pattern = currentPattern;
 		job.fileRevisions = fileRevisions;
 		job.ignoreCase = caseItem.getSelection();
+		job.ignoreMerges = mergeItem.getSelection();
 		if (allItem.getSelection()) {
 			job.findInCommitId = true;
 			job.findInComments = true;
