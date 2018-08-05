@@ -19,6 +19,7 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 
@@ -62,6 +63,15 @@ public class FileDiffLabelProvider extends ColumnLabelProvider {
 			return dimmedForegroundColor;
 		else
 			return null;
+	}
+
+	@Override
+	public Font getFont(Object element) {
+		final FileDiff c = (FileDiff) element;
+		return c.getNewPath().contains("test1") //$NON-NLS-1$
+				? JFaceResources.getFontRegistry()
+						.getBold(JFaceResources.TEXT_FONT)
+				: null;
 	}
 
 	@Override
